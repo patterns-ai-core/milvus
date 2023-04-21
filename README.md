@@ -35,6 +35,8 @@ client = Milvus::Client.new(
 ### Using the Collections endpoints
 
 ```ruby
+# Data types: "boolean", "int8", "int16", "int32", "int64", "float", "double", "string", "varchar", "binary_vector", "float_vector"
+
 # Creating a new collection schema
 client.collections.create(
   collection_name: "book",
@@ -71,19 +73,19 @@ client.collections.create(
 ```
 ```ruby
 # Get the collection info
-client.collections.get(collection_name: "recipes")
+client.collections.get(collection_name: "book")
 ```
 ```ruby
 # Delete the collection
-client.collections.delete(collection_name: "recipes")
+client.collections.delete(collection_name: "book")
 ```
 ```ruby
 # Load the collection to memory before a search or a query
-client.collections.load(collection_name: "recipes")
+client.collections.load(collection_name: "book")
 ```
 ```ruby
 # Release a collection from memory after a search or a query to reduce memory usage
-client.collections.release(collection_name: "recipes")
+client.collections.release(collection_name: "book")
 ```
 
 ### Inserting Data
@@ -159,7 +161,22 @@ client.indices.delete(
 ### Search & Querying
 ```ruby
 client.search(
-
+  collection_name: "book",
+  output_fields: ["book_id"], # optional
+  anns_field: "book_intro",
+  top_k: "2",
+  params: "{\"nprobe\": 10}",
+  metric_type: "L2",
+  round_decimal: "-1",
+  vectors: [ [0.1,0.2] ],
+  dsl_type: 1
+)
+```
+```ruby
+client.query(
+  collection_name: "book",
+  output_fields: ["book_id", "book_intro"],
+  expr: "book_id in [2,4,6,8]"
 )
 ```
 
@@ -215,4 +232,5 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/andrei
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+`milvus` is licensed under the Apache License, Version 2.0. View a copy of the License file.
+

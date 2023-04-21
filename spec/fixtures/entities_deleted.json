@@ -1,0 +1,15 @@
+{
+  "status": {},
+  "IDs": {
+    "IdField": {
+      "IntId": {
+        "data": [
+          0,
+          1
+        ]
+      }
+    }
+  },
+  "delete_cnt": 2,
+  "timestamp": 440950991152218116
+}

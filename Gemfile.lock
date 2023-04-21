@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    milvus (0.1.0)
+    milvus (0.9.0)
       faraday (~> 2.7.0)
 
 GEM
@@ -39,6 +39,7 @@ GEM
 
 PLATFORMS
   x86_64-darwin-19
+  x86_64-darwin-22
 
 DEPENDENCIES
   milvus!

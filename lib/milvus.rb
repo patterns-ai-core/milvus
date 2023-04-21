@@ -12,4 +12,6 @@ module Milvus
   autoload :Health, "milvus/health"
   autoload :Indices, "milvus/indices"
   autoload :Partitions, "milvus/partitions"
+  autoload :Search, "milvus/search"
+  autoload :Query, "milvus/query"
 end

@@ -42,7 +42,7 @@ module Milvus
           collection_name: collection_name
         }.to_json
       end
-      response.body || true
+      response.body.empty? ? true : response.body
     end
 
     # Load the collection to memory before a search or a query
@@ -52,17 +52,17 @@ module Milvus
           collection_name: collection_name
         }.to_json
       end
-      response.body
+      response.body.empty? ? true : response.body
     end
 
     # Release a collection from memory after a search or a query to reduce memory usage
     def release(collection_name:)
-      response = client.connection.delete("#{PATH}/release") do |req|
+      response = client.connection.delete("#{PATH}/load") do |req|
         req.body = {
           collection_name: collection_name
         }.to_json
       end
-      response.body
+      response.body.empty? ? true : response.body
     end
   end
 end

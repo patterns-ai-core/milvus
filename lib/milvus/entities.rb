@@ -20,7 +20,7 @@ module Milvus
 
         req.body['partition_name'] = partition_name if partition_name
       end
-      response.body
+      response.body.empty? ? true : response.body
     end
 
     # Delete the entities with the boolean expression you created
@@ -34,7 +34,7 @@ module Milvus
           expr: expression
         }.to_json
       end
-      response.body
+      response.body.empty? ? true : response.body
     end
 
     # Compact data manually
@@ -46,7 +46,7 @@ module Milvus
           collectionID: collection_id
         }.to_json
       end
-      response.body
+      response.body.empty? ? true : response.body
     end
 
     # Check compaction status
@@ -58,7 +58,7 @@ module Milvus
           compactionID: compaction_id
         }.to_json
       end
-      response.body
+      response.body.empty? ? true : response.body
     end
   end
 end

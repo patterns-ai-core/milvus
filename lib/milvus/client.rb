@@ -36,12 +36,12 @@ module Milvus
       @indices ||= Milvus::Indices.new(client: self)
     end
 
-    def search
-      @search ||= Milvus::Search.new(client: self).post
+    def search(...)
+      @search ||= Milvus::Search.new(client: self).post(...)
     end
 
-    def query
-      @query ||= Milvus::Query.new(client: self).post
+    def query(...)
+      @query ||= Milvus::Query.new(client: self).post(...)
     end
 
     def connection

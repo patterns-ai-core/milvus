@@ -6,10 +6,12 @@ module Milvus
 
     # Create a partition
     def create(collection_name:, partition_name:)
-      response = client.connection.post(PATH, {
-        collection_name: collection_name,
-        partition_name: partition_name
-      })
+      response = client.connection.post(PATH) do |req|
+        req.body = {
+          collection_name: collection_name,
+          partition_name: partition_name
+        }
+      end
       response.body.empty? ? true : response.body
     end
 
@@ -53,13 +55,13 @@ module Milvus
 
     def release(
       collection_name:,
-      partition_name:,
+      partition_names:,
       replica_number: nil
     )
       response = client.connection.delete("#{PATH}s/load") do |req|
         req.body = {
           collection_name: collection_name,
-          partition_name: partition_name
+          partition_names: partition_names
         }
         req.body[:replica_number] = replica_number if replica_number
       end

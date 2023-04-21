@@ -1,0 +1,50 @@
+{
+  "status": {},
+  "schema": {
+    "name": "book",
+    "description": "Test book search",
+    "fields": [
+      {
+        "fieldID": 100,
+        "name": "book_id",
+        "is_primary_key": true,
+        "description": "book id",
+        "data_type": 5
+      },
+      {
+        "fieldID": 101,
+        "name": "word_count",
+        "description": "count of words",
+        "data_type": 5
+      },
+      {
+        "fieldID": 102,
+        "name": "book_intro",
+        "description": "embedded vector of book introduction",
+        "data_type": 101,
+        "type_params": [
+          {
+            "key": "dim",
+            "value": "2"
+          }
+        ]
+      }
+    ]
+  },
+  "collectionID": 440928616022607200,
+  "virtual_channel_names": [
+    "by-dev-rootcoord-dml_14_440928616022607200v0",
+    "by-dev-rootcoord-dml_15_440928616022607200v1"
+  ],
+  "physical_channel_names": [
+    "by-dev-rootcoord-dml_14",
+    "by-dev-rootcoord-dml_15"
+  ],
+  "created_timestamp": 440932111134752770,
+  "created_utc_timestamp": 1682022518672,
+  "shards_num": 2,
+  "collection_name": "book"
+}
+
+
+
