@@ -2,7 +2,7 @@
 
 module Milvus
   class Entities < Base
-    PATH = "entities".freeze
+    PATH = "entities"
 
     # Insert the data to the collection.
     def insert(
@@ -18,7 +18,7 @@ module Milvus
           num_rows: num_rows
         }.to_json
 
-        req.body['partition_name'] = partition_name if partition_name
+        req.body["partition_name"] = partition_name if partition_name
       end
       response.body.empty? ? true : response.body
     end

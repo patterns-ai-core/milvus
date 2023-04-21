@@ -28,27 +28,27 @@ RSpec.describe Milvus::Collections do
         auto_id: false,
         fields: [
           {
-            "name": "book_id",
-            "description": "book id",
-            "is_primary_key": true,
-            "autoID": false,
-            "data_type": Milvus::DATA_TYPES["int64"]
+            name: "book_id",
+            description: "book id",
+            is_primary_key: true,
+            autoID: false,
+            data_type: Milvus::DATA_TYPES["int64"]
           },
           {
-            "name": "word_count",
-            "description": "count of words",
-            "is_primary_key": false,
-            "data_type": Milvus::DATA_TYPES["int64"]
+            name: "word_count",
+            description: "count of words",
+            is_primary_key: false,
+            data_type: Milvus::DATA_TYPES["int64"]
           },
           {
-            "name": "book_intro",
-            "description": "embedded vector of book introduction",
-            "data_type": Milvus::DATA_TYPES["binary_vector"],
-            "is_primary_key": false,
-            "type_params": [
+            name: "book_intro",
+            description: "embedded vector of book introduction",
+            data_type: Milvus::DATA_TYPES["binary_vector"],
+            is_primary_key: false,
+            type_params: [
               {
-                "key": "dim",
-                "value": "2"
+                key: "dim",
+                value: "2"
               }
             ]
           }

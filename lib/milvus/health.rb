@@ -2,7 +2,7 @@
 
 module Milvus
   class Health < Base
-    PATH = "health".freeze
+    PATH = "health"
 
     def get
       response = client.connection.get(PATH.to_s)

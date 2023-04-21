@@ -125,7 +125,8 @@ client.entities.compact!(
   collection_id: "book"
 )
 # => {"status"=>{}, "compactionID"=>440928616022809499}
-
+```
+```ruby
 # Check compaction status
 client.entities.compact_status(
   compaction_id: 440928616022809499

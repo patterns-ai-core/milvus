@@ -2,7 +2,7 @@
 
 module Milvus
   class Collections < Base
-    PATH = "collection".freeze
+    PATH = "collection"
 
     # Create a Collection
     def create(
