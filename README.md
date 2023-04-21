@@ -37,22 +37,164 @@ client = Milvus::Client.new(
 ```ruby
 # Creating a new collection schema
 client.collections.create(
-  collection_name: "recipes",
-  description: "Collection of recipes",
-  auto_id: true,
+  collection_name: "book",
+  description: "Test book search",
+  auto_id: false,
   fields: [
     {
-      name: "recipe_id",
-      data_type: 5,
-      description: "Primary key",
-      is_primary_key: true
+      "name": "book_id",
+      "description": "book id",
+      "is_primary_key": true,
+      "autoID": false,
+      "data_type": Milvus::DATA_TYPES["int64"]
+    },
+    {
+      "name": "word_count",
+      "description": "count of words",
+      "is_primary_key": false,
+      "data_type": Milvus::DATA_TYPES["int64"]
+    },
+    {
+      "name": "book_intro",
+      "description": "embedded vector of book introduction",
+      "data_type": Milvus::DATA_TYPES["binary_vector"],
+      "is_primary_key": false,
+      "type_params": [
+        {
+          "key": "dim",
+          "value": "2"
+        }
+      ]
     }
   ]
 )
 ```
 ```ruby
 # Get the collection info
-client.collections.get(collection_name: 'recipes')
+client.collections.get(collection_name: "recipes")
+```
+```ruby
+# Delete the collection
+client.collections.delete(collection_name: "recipes")
+```
+```ruby
+# Load the collection to memory before a search or a query
+client.collections.load(collection_name: "recipes")
+```
+```ruby
+# Release a collection from memory after a search or a query to reduce memory usage
+client.collections.release(collection_name: "recipes")
+```
+
+### Inserting Data
+```ruby
+client.entities.insert(
+  collection_name: "book",
+  num_rows: 5, # Number of rows to be inserted. The number should be the same as the length of each field array.
+  fields_data: [
+    {
+      "field_name": "book_id",
+      "type": Milvus::DATA_TYPES["int64"],
+      "field": [1,2,3,4,5]
+    },
+    {
+      "field_name": "word_count",
+      "type": Milvus::DATA_TYPES["int64"],
+      "field": [1000,2000,3000,4000,5000]
+    },
+    {
+      "field_name": "book_intro",
+      "type": 101,
+      "field": [ [1,1],[2,1],[3,1],[4,1],[5,1] ]
+    }
+  ]  
+)
+```
+```ruby
+# Delete the entities with the boolean expression you created
+client.entities.delete(
+  collection_name: "book",
+  expression: "book_id in [0,1]"
+)
+```
+```ruby
+# Compact data manually
+client.entities.compact!(
+  collection_id: "book"
+)
+# => {"status"=>{}, "compactionID"=>440928616022809499}
+
+# Check compaction status
+client.entities.compact_status(
+  compaction_id: 440928616022809499
+)
+# => {"status"=>{}, "state"=>2}
+```
+
+### Indices
+```ruby
+client.indices.create(
+  collection_name: "book",
+  field_name: "book_intro",
+  extra_params: [
+    { key: "metric_type", "value": "L2" },
+    { key: "index_type", "value": "IVF_FLAT" },
+    { key: "params", "value": "{\"nlist\":1024}" }
+  ]
+)
+```
+```ruby
+collection.indices.create(
+  field_name="book_name", 
+  index_name="scalar_index",
+)
+```
+```ruby
+client.indices.delete(
+  collection_name: "book",
+  field_name: "book_intro"
+)
+```
+
+### Search & Querying
+```ruby
+client.search(
+
+)
+```
+
+### Partitions
+```ruby
+client.partitions.create(
+  "collection_name": "book",
+  "partition_name": "novel"
+)
+```
+```ruby
+client.partitions.get(
+  "collection_name": "book",
+  "partition_name": "novel"
+)
+```
+```ruby
+client.partitions.delete(
+  "collection_name": "book",
+  "partition_name": "novel"
+)
+```
+```ruby
+client.partitions.load(
+  "collection_name": "book",
+  "partition_names": ["novel"],
+  "replica_number": 1
+)
+```
+```ruby
+client.partitions.release(
+  "collection_name": "book",
+  "partition_names": ["novel"],
+  "replica_number": 1
+)
 ```
 
 ### Health

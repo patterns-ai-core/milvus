@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "milvus/version"
+require_relative "milvus/constants"
 
 module Milvus
   autoload :Base, "milvus/base"

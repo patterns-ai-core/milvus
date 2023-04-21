@@ -2,15 +2,16 @@
 
 module Milvus
   class Collections < Base
-    PATH = "collection"
+    PATH = "collection".freeze
 
+    # Create a Collection
     def create(
       collection_name:,
       auto_id:,
       description:,
       fields:
     )
-      response = client.connection.post(PATH.to_s) do |req|
+      response = client.connection.post(PATH) do |req|
         req.body = {
           collection_name: collection_name,
           schema: {
@@ -21,11 +22,42 @@ module Milvus
           }
         }.to_json
       end
-      response.success?
+      response.body.empty? ? true : response.body
     end
 
-    def exists?(collection_name:)
-      response = client.connection.get(PATH.to_s) do |req|
+    # Retrieve a Collection
+    def get(collection_name:)
+      response = client.connection.get(PATH) do |req|
+        req.body = {
+          collection_name: collection_name
+        }.to_json
+      end
+      response.body
+    end
+
+    # Drop a Collection
+    def delete(collection_name:)
+      response = client.connection.delete(PATH) do |req|
+        req.body = {
+          collection_name: collection_name
+        }.to_json
+      end
+      response.body || true
+    end
+
+    # Load the collection to memory before a search or a query
+    def load(collection_name:)
+      response = client.connection.post("#{PATH}/load") do |req|
+        req.body = {
+          collection_name: collection_name
+        }.to_json
+      end
+      response.body
+    end
+
+    # Release a collection from memory after a search or a query to reduce memory usage
+    def release(collection_name:)
+      response = client.connection.delete("#{PATH}/release") do |req|
         req.body = {
           collection_name: collection_name
         }.to_json

@@ -6,7 +6,7 @@ module Milvus
   class Client
     attr_reader :url, :api_key
 
-    API_VERSION = "api/v1"
+    API_VERSION = "api/v1".freeze
 
     def initialize(
       url:,
@@ -37,11 +37,11 @@ module Milvus
     end
 
     def search
-      @search ||= Milvus::Search.new(client: self)
+      @search ||= Milvus::Search.new(client: self).post
     end
 
     def query
-      @query ||= Milvus::Query.new(client: self)
+      @query ||= Milvus::Query.new(client: self).post
     end
 
     def connection
