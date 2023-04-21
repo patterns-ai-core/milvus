@@ -2,7 +2,7 @@
 
 module Milvus
   class Partitions < Base
-    PATH = "partition".freeze
+    PATH = "partition"
 
     # Create a partition
     def create(collection_name:, partition_name:)

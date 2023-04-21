@@ -26,9 +26,9 @@ RSpec.describe Milvus::Indices do
         collection_name: "book",
         field_name: "book_intro",
         extra_params: [
-          { key: "metric_type", "value": "L2" },
-          { key: "index_type", "value": "IVF_FLAT" },
-          { key: "params", "value": "{\"nlist\":1024}" }
+          {key: "metric_type", value: "L2"},
+          {key: "index_type", value: "IVF_FLAT"},
+          {key: "params", value: "{\"nlist\":1024}"}
         ]
       )
       expect(response).to eq(true)

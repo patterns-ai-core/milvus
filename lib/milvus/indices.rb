@@ -2,7 +2,7 @@
 
 module Milvus
   class Indices < Base
-    PATH = "index".freeze
+    PATH = "index"
 
     def create(
       collection_name:,

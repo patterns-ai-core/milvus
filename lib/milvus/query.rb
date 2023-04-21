@@ -2,7 +2,7 @@
 
 module Milvus
   class Query < Base
-    PATH = "query".freeze
+    PATH = "query"
 
     def post(
       collection_name:,

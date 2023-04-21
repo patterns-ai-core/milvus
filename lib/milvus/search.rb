@@ -2,34 +2,28 @@
 
 module Milvus
   class Search < Base
-    PATH = "search".freeze
+    PATH = "search"
 
     def post(
       collection_name:,
-      output_fields: nil,
-      anns_field:,
-      top_k:,
-      params:,
-      metric_type:,
-      round_decimal: nil,
-      vectors:,
-      dsl_type:
+      anns_field:, top_k:, params:, metric_type:, vectors:, dsl_type:, output_fields: nil,
+      round_decimal: nil
     )
       response = client.connection.post(PATH) do |req|
         req.body = {
           collection_name: collection_name,
           search_params: [
-            { key: "anns_field", value: anns_field },
-            { key: "topk", value: top_k },
-            { key: "params", value: params },
-            { key: "metric_type", value: metric_type },
+            {key: "anns_field", value: anns_field},
+            {key: "topk", value: top_k},
+            {key: "params", value: params},
+            {key: "metric_type", value: metric_type}
           ],
           dsl_type: dsl_type,
           vectors: vectors
         }
         if round_decimal
           req.body[:search_params].push(
-            { key: "round_decimal", value: round_decimal }
+            {key: "round_decimal", value: round_decimal}
           )
         end
         if output_fields

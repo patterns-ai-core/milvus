@@ -30,21 +30,21 @@ RSpec.describe Milvus::Entities do
         num_rows: 5,
         fields_data: [
           {
-            "field_name": "book_id",
-            "type": Milvus::DATA_TYPES["int64"],
-            "field": [1,2,3,4,5]
+            field_name: "book_id",
+            type: Milvus::DATA_TYPES["int64"],
+            field: [1, 2, 3, 4, 5]
           },
           {
-            "field_name": "word_count",
-            "type": Milvus::DATA_TYPES["int64"],
-            "field": [1000,2000,3000,4000,5000]
+            field_name: "word_count",
+            type: Milvus::DATA_TYPES["int64"],
+            field: [1000, 2000, 3000, 4000, 5000]
           },
           {
-            "field_name": "book_intro",
-            "type": 101,
-            "field": [ [1,1],[2,1],[3,1],[4,1],[5,1] ]
+            field_name: "book_intro",
+            type: 101,
+            field: [[1, 1], [2, 1], [3, 1], [4, 1], [5, 1]]
           }
-        ]  
+        ]
       )
       expect(response).to eq(entities_created_fixture)
     end

@@ -29,7 +29,7 @@ RSpec.describe Milvus::Search do
         params: "{\"nprobe\": 10}",
         metric_type: "L2",
         round_decimal: "-1",
-        vectors: [ [0.1,0.2] ],
+        vectors: [[0.1, 0.2]],
         dsl_type: 1
       )
       expect(response).to eq(search_result)
