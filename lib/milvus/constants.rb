@@ -11,7 +11,7 @@ module Milvus
     "double" => 11,
     "string" => 20,
     "varchar" => 21,
-    "binary_vector" => 101,
-    "float_vector" => 102
+    "binary_vector" => 100,
+    "float_vector" => 101
   }.freeze
 end
