@@ -7,7 +7,7 @@ module Milvus
     def post(
       collection_name:,
       anns_field:, top_k:, params:, metric_type:, vectors:, dsl_type:, output_fields: nil,
-      round_decimal: nil, partition_names: nil,vector: nil
+      round_decimal: nil, partition_names: nil,vector: nil, filter: nil
     )
       response = client.connection.post(PATH) do |req|
         req.body = {
@@ -23,6 +23,7 @@ module Milvus
         # support for single search vs batch search and also allows for partition scans
         req.body[:vectors] = vectors if vectors
         req.body[:vector] = vector if vector
+        req.body[:filter] = filter if filter
         req.body[:partition_names] = partition_names if partition_names
 
         if round_decimal
