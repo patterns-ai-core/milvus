@@ -9,7 +9,7 @@ module Milvus
       anns_field:, top_k:, params:, metric_type:, vectors:, dsl_type:, output_fields: nil,
       round_decimal: nil, partition_names: nil, filter: nil)
       response = client.connection.post(PATH) do |req|
-        req.body = {
+        body = {
           collection_name: collection_name,
           search_params: [
             {key: "anns_field", value: anns_field},
@@ -20,17 +20,18 @@ module Milvus
           vectors: vectors,
           dsl_type: dsl_type,
         }
-        req.body[:expr] = filter if filter
-        req.body[:partition_names] = partition_names if partition_names
+        body[:expr] = filter if filter
+        body[:partition_names] = partition_names if partition_names
 
         if round_decimal
-          req.body[:search_params].push(
+          body[:search_params].push(
             {key: "round_decimal", value: round_decimal}
           )
         end
         if output_fields
-          req.body[:output_fields] = output_fields
+          body[:output_fields] = output_fields
         end
+        req.body = body.to_json
       end
       response.body.empty? ? true : response.body
     end
