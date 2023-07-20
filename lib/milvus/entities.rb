@@ -12,13 +12,13 @@ module Milvus
       partition_name: nil
     )
       response = client.connection.post(PATH) do |req|
-        req.body = {
+        body = {
           collection_name: collection_name,
           fields_data: fields_data,
           num_rows: num_rows
-        }.to_json
-
-        req.body["partition_name"] = partition_name if partition_name
+        }
+        body["partition_name"] = partition_name if partition_name
+        req.body = body.to_json
       end
       response.body.empty? ? true : response.body
     end

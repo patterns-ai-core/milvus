@@ -49,9 +49,16 @@ module Milvus
         if api_key
           faraday.request :authorization, :Bearer, api_key
         end
+        retry_options = {
+          max: 5,
+          interval: 0.05,
+          interval_randomness: 0.5,
+          backoff_factor: 2
+        }
+        faraday.request :retry, retry_options
         faraday.request :json
         faraday.response :json, content_type: /\bjson$/
-        faraday.adapter Faraday.default_adapter
+        faraday.adapter :net_http_persistent
       end
     end
   end

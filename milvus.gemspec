@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description = "Ruby wrapper for the Milvus vector search database API"
   spec.homepage = "https://github.com/andreibondarev/milvus"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 2.6.0"
+  spec.required_ruby_version = ">= 3.0"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/andreibondarev/milvus"
@@ -30,5 +30,5 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "pry-byebug", "~> 3.10.0"
-  spec.add_dependency "faraday", "~> 1"
+  spec.add_dependency "faraday", "~> 1.9"
 end

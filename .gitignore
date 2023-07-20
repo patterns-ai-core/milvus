@@ -11,3 +11,12 @@
 .rspec_status
 
 /volumes
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/.gitignore
+/.idea/dictionaries
+/.idea/jsLibraryMappings.xml
+/.idea/markdown.xml
+/.idea/milvus.iml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/vcs.xml
