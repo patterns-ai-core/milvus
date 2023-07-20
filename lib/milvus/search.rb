@@ -6,7 +6,7 @@ module Milvus
 
     def post(
       collection_name:,
-      anns_field:, top_k:, params:, metric_type:, vectors:, dsl_type:, output_fields: nil,
+      anns_field:, top_k:, params:, metric_type:, vectors:, vector_type:, dsl_type:, output_fields: nil,
       round_decimal: nil, partition_names: nil, filter: nil)
       response = client.connection.post(PATH) do |req|
         body = {
@@ -18,6 +18,7 @@ module Milvus
             {key: "metric_type", value: metric_type}
           ],
           vectors: vectors,
+          vector_type: vector_type,
           dsl_type: dsl_type,
         }
         body[:expr] = filter if filter
