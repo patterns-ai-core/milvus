@@ -57,6 +57,7 @@ module Milvus
         }
         faraday.request :retry, retry_options
         faraday.request :json
+        faraday.request.options[:timeout] = 10 # 10 sec timeout for connection
         faraday.response :json, content_type: /\bjson$/
         faraday.adapter :net_http_persistent
       end
