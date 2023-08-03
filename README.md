@@ -154,8 +154,8 @@ client.indices.create(
 ```
 ```ruby
 collection.indices.create(
-  field_name="book_name", 
-  index_name="scalar_index",
+  field_name: "book_name", 
+  index_name: "scalar_index",
 )
 ```
 ```ruby
