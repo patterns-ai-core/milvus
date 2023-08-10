@@ -6,8 +6,15 @@ module Milvus
 
     def post(
       collection_name:,
-      anns_field:, top_k:, params:, metric_type:, vectors:, dsl_type:, output_fields: nil,
-      round_decimal: nil
+      anns_field:,
+      top_k:,
+      params:,
+      metric_type:,
+      vectors:,
+      dsl_type:,
+      output_fields: nil,
+      round_decimal: nil,
+      vector_type: nil
     )
       response = client.connection.post(PATH) do |req|
         req.body = {
@@ -19,7 +26,8 @@ module Milvus
             {key: "metric_type", value: metric_type}
           ],
           dsl_type: dsl_type,
-          vectors: vectors
+          vectors: vectors,
+          vector_type: vector_type
         }
         if round_decimal
           req.body[:search_params].push(
