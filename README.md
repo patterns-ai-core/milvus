@@ -1,8 +1,8 @@
 # Milvus
 
 <p>
-    <img alt='Milvus logo' src='https://res.cloudinary.com/crunchbase-production/image/upload/c_lpad,f_auto,q_auto:eco,dpr_1/cqpyxcuzl6gwqjjwzamt' height='50' />
-    +&nbsp;&nbsp;
+    <img alt='Milvus logo' src='https://milvus.io/images/milvus_logo.svg' height='50' />
+    &nbsp;&nbsp;
     <img alt='Ruby logo' src='https://user-images.githubusercontent.com/541665/230231593-43861278-4550-421d-a543-fd3553aac4f6.png' height='40' />
 </p>
 
@@ -10,11 +10,14 @@ Ruby wrapper for the Milvus vector search database API.
 
 Part of the [Langchain.rb](https://github.com/andreibondarev/langchainrb) stack.
 
+Available for paid consulting engagements! [Email me](mailto:andrei@sourcelabs.io).
+
 ![Tests status](https://github.com/andreibondarev/milvus/actions/workflows/ci.yml/badge.svg)
 [![Gem Version](https://badge.fury.io/rb/milvus.svg)](https://badge.fury.io/rb/milvus)
 [![Docs](http://img.shields.io/badge/yard-docs-blue.svg)](http://rubydoc.info/gems/milvus)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/andreibondarev/milvus/blob/main/LICENSE.txt)
 [![](https://dcbadge.vercel.app/api/server/WDARp7J2n8?compact=true&style=flat)](https://discord.gg/WDARp7J2n8)
+[![X](https://img.shields.io/twitter/url/https/twitter.com/cloudposse.svg?style=social&label=Follow%20%40rushing_andrei)](https://twitter.com/rushing_andrei)
 
 ## Installation
 
