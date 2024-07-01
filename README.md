@@ -44,7 +44,7 @@ client = Milvus::Client.new(
 ### Using the Collections endpoints
 
 ```ruby
-# Data types: "boolean", "int8", "int16", "int32", "int64", "float", "double", "string", "varchar", "binary_vector", "float_vector"
+# Data types: [constants.rb](https://github.com/patterns-ai-core/milvus/blob/main/lib/milvus/constants.rb)
 
 # Creating a new collection schema
 client.collections.create(
