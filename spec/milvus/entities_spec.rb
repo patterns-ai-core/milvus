@@ -58,7 +58,7 @@ RSpec.describe Milvus::Entities do
     it "inserts new records into the database or updates existing ones" do
       expect(connection).to receive(:post).with("entities/upsert").and_return(response)
       result = entities.upsert(collection_name: collection_name, data: data)
-      expect(result).to be true
+      expect(result).to eq(response_body)
     end
   end
 
@@ -88,8 +88,13 @@ RSpec.describe Milvus::Entities do
 
     it "executes a search" do
       expect(connection).to receive(:post).with("entities/search").and_return(response)
-      result = entities.search(collection_name: collection_name, search: search, rerank: rerank, annsField: annsField, limit: limit, output_fields: output_fields)
-      expect(result).to be true
+      result = entities.search(
+        collection_name: collection_name,
+        data: [[0.1, 0.2, 0.3]],
+        output_fields: ["content"],
+        anns_field: "vectors",
+      )
+      expect(result).to eq(response_body)
     end
   end
 

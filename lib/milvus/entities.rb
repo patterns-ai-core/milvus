@@ -54,13 +54,13 @@ module Milvus
     def query(
       collection_name:,
       filter:,
-      output_fields:,
-      limit:
+      output_fields: [],
+      limit: nil
     )
       response = client.connection.post("#{PATH}/query") do |req|
         req.body = {
           collectionName: collection_name,
-          expr: expr
+          filter: filter
         }
         req.body[:outputFields] = output_fields if output_fields
         req.body[:limit] = limit if limit
@@ -113,21 +113,23 @@ module Milvus
 
     def search(
       collection_name:,
-      search:,
-      rerank:,
-      annsField:,
+      data:,
+      anns_field:,
       limit: nil,
-      output_fields: []
+      output_fields: [],
+      offset: nil,
+      filter: nil
     )
       response = client.connection.post("#{PATH}/search") do |req|
         params = {
           collectionName: collection_name,
-          search: search,
-          annsField: annsField,
-          rerank: rerank
+          data: data,
+          annsField: anns_field
         }
         params[:limit] = limit if limit
         params[:outputFields] = output_fields if output_fields.any?
+        params[:offset] = offset if offset
+        params[:filter] = filter if filter
         req.body = params
       end
       response.body.empty? ? true : response.body

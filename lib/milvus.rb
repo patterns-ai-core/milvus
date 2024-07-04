@@ -11,6 +11,4 @@ module Milvus
   autoload :Entities, "milvus/entities"
   autoload :Indexes, "milvus/indexes"
   autoload :Partitions, "milvus/partitions"
-  autoload :Search, "milvus/search"
-  autoload :Query, "milvus/query"
 end

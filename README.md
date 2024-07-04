@@ -199,28 +199,21 @@ client.indexes.drop(
 
 ### Search, Querying & Hybrid Search
 ```ruby
-client.search(
-  collection_name: "book",
-  output_fields: ["book_id"], # optional
-  anns_field: "book_intro",
-  top_k: "2",
-  params: "{\"nprobe\": 10}",
-  metric_type: "L2",
-  round_decimal: "-1",
-  vectors: [ [0.1,0.2] ],
-  dsl_type: 1
+client.entities.search(
+  collection_name: "recipes",
+  anns_field: "vectors",
+  data: [embedding],
+  filter: "id in [450847466900987454]"
 )
 ```
 ```ruby
-client.query(
-  collection_name: "book",
-  output_fields: ["book_id", "book_intro"],
-  expr: "book_id in [2,4,6,8]"
+client.entities.query(
+  collection_name: "recipes",
+  filter: "id in [450847466900987455, 450847466900987454]"
 )
 ```
-
 ```ruby
-client.hybrid_search(
+client.entities.hybrid_search(
   collection_name: "recipes",
   search: [{
     filter: "id in [450847466900987455]",
