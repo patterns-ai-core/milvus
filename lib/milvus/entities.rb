@@ -4,59 +4,160 @@ module Milvus
   class Entities < Base
     PATH = "entities"
 
-    # Insert the data to the collection.
+    # This operation inserts data into a specific collection.
+    #
+    # @param collection_name [String] The name of the collection to insert data into.
+    # @param data [Array<Hash>] The data to insert.
+    # @param partition_name [String] The name of the partition to insert the data into.
+    #
+    # @return [Hash] The response from the server.
     def insert(
       collection_name:,
-      fields_data:,
-      num_rows:,
+      data:,
       partition_name: nil
     )
-      response = client.connection.post(PATH) do |req|
+      response = client.connection.post("#{PATH}/insert") do |req|
         req.body = {
-          collection_name: collection_name,
-          fields_data: fields_data,
-          num_rows: num_rows
-        }.to_json
+          collectionName: collection_name,
+          data: data
+        }
 
-        req.body["partition_name"] = partition_name if partition_name
+        req.body[:partitionName] = partition_name if partition_name
       end
       response.body.empty? ? true : response.body
     end
 
-    # Delete the entities with the boolean expression you created
+    # This operation deletes entities by their IDs or with a boolean expression.
+    #
+    # @param collection_name [String] The name of the collection to delete entities from.
+    # @param filter [String] The filter to use to delete entities.
+    # @return [Hash] The response from the server.
     def delete(
       collection_name:,
-      expression:
+      filter:
     )
-      response = client.connection.delete(PATH) do |req|
+      response = client.connection.post("#{PATH}/delete") do |req|
         req.body = {
-          collection_name: collection_name,
-          expr: expression
+          collectionName: collection_name,
+          filter: filter
         }.to_json
       end
       response.body.empty? ? true : response.body
     end
 
-    # Compact data manually
-    def compact!(
-      collection_id:
+    # This operation conducts a filtering on the scalar field with a specified boolean expression.
+    #
+    # @param collection_name [String] The name of the collection to query.
+    # @param filter [String] The filter to use to query the collection.
+    # @param output_fields [Array<String>] The fields to return in the results.
+    # @param limit [Integer] The maximum number of results to return.
+    def query(
+      collection_name:,
+      filter:,
+      output_fields:,
+      limit:
     )
-      response = client.connection.post("compaction") do |req|
+      response = client.connection.post("#{PATH}/query") do |req|
         req.body = {
-          collectionID: collection_id
-        }.to_json
+          collectionName: collection_name,
+          expr: expr
+        }
+        req.body[:outputFields] = output_fields if output_fields
+        req.body[:limit] = limit if limit
       end
       response.body.empty? ? true : response.body
     end
 
-    # Check compaction status
-    def compact_status(
-      compaction_id:
+    # This operation inserts new records into the database or updates existing ones.
+    #
+    # @param collection_name [String] The name of the collection to upsert data into.
+    # @param data [Array<Hash>] The data to upsert.
+    # @param partition_name [String] The name of the partition to upsert the data into.
+    # @return [Hash] The response from the server.
+    def upsert(
+      collection_name:,
+      data:,
+      partition_name: nil
     )
-      response = client.connection.get("compaction/state") do |req|
+      response = client.connection.post("#{PATH}/upsert") do |req|
         req.body = {
-          compactionID: compaction_id
-        }.to_json
+          collectionName: collection_name,
+          data: data
+        }
+
+        req.body[:partitionName] = partition_name if partition_name
+      end
+      response.body.empty? ? true : response.body
+    end
+
+    # This operation gets specific entities by their IDs
+    #
+    # @param collection_name [String] The name of the collection to get entities from.
+    # @param id [Array<Integer>] The IDs of the entities to get.
+    # @param output_fields [Array<String>] The fields to return in the results.
+    # @return [Hash] The response from the server.
+    def get(
+      collection_name:,
+      id:,
+      output_fields: nil
+    )
+      response = client.connection.post("#{PATH}/get") do |req|
+        req.body = {
+          collectionName: collection_name,
+          id: id
+        }
+        req.body[:outputFields] = output_fields if output_fields
+      end
+      response.body.empty? ? true : response.body
+    end
+
+    def search(
+      collection_name:,
+      search:,
+      rerank:,
+      annsField:,
+      limit: nil,
+      output_fields: []
+    )
+      response = client.connection.post("#{PATH}/search") do |req|
+        params = {
+          collectionName: collection_name,
+          search: search,
+          annsField: annsField,
+          rerank: rerank
+        }
+        params[:limit] = limit if limit
+        params[:outputFields] = output_fields if output_fields.any?
+        req.body = params
+      end
+      response.body.empty? ? true : response.body
+    end
+
+    # Executes a hybrid search.
+    #
+    # @param collection_name [String] The name of the collection to search.
+    # @param data [Array<Hash>] The data to search for.
+    # @param rerank [Hash] The rerank parameters.
+    # @param limit [Integer] The maximum number of results to return.
+    # @param output_fields [Array<String>] The fields to return in the results.
+    #
+    # @return [Hash] The search results.
+    def hybrid_search(
+      collection_name:,
+      search:,
+      rerank:,
+      limit: nil,
+      output_fields: []
+    )
+      response = client.connection.post("#{PATH}/hybrid_search") do |req|
+        params = {
+          collectionName: collection_name,
+          search: search,
+          rerank: rerank
+        }
+        params[:limit] = limit if limit
+        params[:outputFields] = output_fields if output_fields.any?
+        req.body = params
       end
       response.body.empty? ? true : response.body
     end

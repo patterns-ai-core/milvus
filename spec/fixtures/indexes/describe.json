@@ -1,0 +1,16 @@
+{
+  "code": 0,
+  "data": [
+    {
+      "failReason": "",
+      "fieldName": "content",
+      "indexName": "content_idx",
+      "indexState": "Finished",
+      "indexType": "",
+      "indexedRows": 0,
+      "metricType": "L2",
+      "pendingRows": 0,
+      "totalRows": 0
+    }
+  ]
+}

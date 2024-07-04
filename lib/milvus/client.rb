@@ -32,8 +32,8 @@ module Milvus
       @entities ||= Milvus::Entities.new(client: self)
     end
 
-    def indices
-      @indices ||= Milvus::Indices.new(client: self)
+    def indexes
+      @indexes ||= Milvus::Indexes.new(client: self)
     end
 
     def search(...)

@@ -1,104 +1,100 @@
-# frozen_string_literal: true
+# spec/milvus/partitions_spec.rb
 
 require "spec_helper"
+require "faraday"
 
 RSpec.describe Milvus::Partitions do
-  let(:client) {
-    Milvus::Client.new(
-      url: "http://localhost:9091"
-    )
-  }
+  let(:client) { instance_double("Client", connection: connection) }
+  let(:connection) { instance_double("Faraday::Connection") }
+  let(:partitions) { described_class.new(client: client) }
 
-  let(:partitions) { client.partitions }
-  let(:status_fixture) { JSON.parse(File.read("spec/fixtures/status.json")) }
+  describe "#list" do
+    let(:collection_name) { "test_collection" }
+    let(:response_body) { File.read("spec/fixtures/partitions/list.json") }
+    let(:response) { instance_double("Faraday::Response", body: response_body) }
+
+    it "lists all partitions in the specified collection" do
+      expect(connection).to receive(:post).with("partitions/list").and_return(response)
+      result = partitions.list(collection_name: collection_name)
+      expect(result).to eq(response_body)
+    end
+  end
 
   describe "#create" do
-    let(:response) { OpenStruct.new(body: {}) }
+    let(:collection_name) { "test_collection" }
+    let(:partition_name) { "test_partition" }
+    let(:response_body) { File.read("spec/fixtures/partitions/create.json") }
+    let(:response) { instance_double("Faraday::Response", body: response_body) }
 
-    before do
-      allow_any_instance_of(Faraday::Connection).to receive(:post)
-        .with(Milvus::Partitions::PATH)
-        .and_return(response)
-    end
-
-    it "returns true" do
-      response = client.partitions.create(
-        collection_name: "book",
-        partition_name: "test"
-      )
-      expect(response).to eq(true)
+    it "creates a partition in a collection" do
+      expect(connection).to receive(:post).with("partitions/create").and_return(response)
+      result = partitions.create(collection_name: collection_name, partition_name: partition_name)
+      expect(result).to eq(response_body)
     end
   end
 
-  describe "#get" do
-    let(:response) { OpenStruct.new(body: status_fixture) }
+  describe "#drop" do
+    let(:collection_name) { "test_collection" }
+    let(:partition_name) { "test_partition" }
+    let(:response_body) { File.read("spec/fixtures/partitions/drop.json") }
+    let(:response) { instance_double("Faraday::Response", body: response_body) }
 
-    before do
-      allow_any_instance_of(Faraday::Connection).to receive(:get)
-        .with("#{Milvus::Partitions::PATH}/existence")
-        .and_return(response)
-    end
-
-    it "returns partition" do
-      response = client.partitions.get(
-        collection_name: "book",
-        partition_name: "test"
-      )
-      expect(response).to eq(status_fixture)
+    it "drops the current partition from the collection" do
+      expect(connection).to receive(:post).with("partitions/drop").and_return(response)
+      result = partitions.drop(collection_name: collection_name, partition_name: partition_name)
+      expect(result).to eq(response_body)
     end
   end
 
-  describe "#delete" do
-    let(:response) { OpenStruct.new(body: {}) }
+  describe "#has" do
+    let(:collection_name) { "test_collection" }
+    let(:partition_name) { "test_partition" }
+    let(:response_body) { File.read("spec/fixtures/partitions/has.json") }
+    let(:response) { instance_double("Faraday::Response", body: response_body) }
 
-    before do
-      allow_any_instance_of(Faraday::Connection).to receive(:delete)
-        .with(Milvus::Partitions::PATH)
-        .and_return(response)
-    end
-
-    it "returns true" do
-      response = client.partitions.delete(
-        collection_name: "book",
-        partition_name: "test"
-      )
-      expect(response).to eq(true)
+    it "checks whether a partition exists" do
+      expect(connection).to receive(:post).with("partitions/has").and_return(response)
+      result = partitions.has(collection_name: collection_name, partition_name: partition_name)
+      expect(result).to eq(response_body)
     end
   end
 
   describe "#load" do
-    let(:response) { OpenStruct.new(body: {}) }
+    let(:collection_name) { "test_collection" }
+    let(:partition_names) { ["test_partition"] }
+    let(:response_body) { File.read("spec/fixtures/partitions/load.json") }
+    let(:response) { instance_double("Faraday::Response", body: response_body) }
 
-    before do
-      allow_any_instance_of(Faraday::Connection).to receive(:post)
-        .with("#{Milvus::Partitions::PATH}s/load")
-        .and_return(response)
-    end
-
-    it "returns true" do
-      response = client.partitions.load(
-        collection_name: "book",
-        partition_names: ["test"]
-      )
-      expect(response).to eq(true)
+    it "loads the data of the current partition into memory" do
+      expect(connection).to receive(:post).with("partitions/load").and_return(response)
+      result = partitions.load(collection_name: collection_name, partition_names: partition_names)
+      expect(result).to eq(response_body)
     end
   end
 
   describe "#release" do
-    let(:response) { OpenStruct.new(body: {}) }
+    let(:collection_name) { "test_collection" }
+    let(:partition_names) { ["test_partition"] }
+    let(:response_body) { File.read("spec/fixtures/partitions/release.json") }
+    let(:response) { instance_double("Faraday::Response", body: response_body) }
 
-    before do
-      allow_any_instance_of(Faraday::Connection).to receive(:delete)
-        .with("#{Milvus::Partitions::PATH}s/load")
-        .and_return(response)
+    it "releases the data of the current partition from memory" do
+      expect(connection).to receive(:post).with("partitions/release").and_return(response)
+      result = partitions.release(collection_name: collection_name, partition_names: partition_names)
+      expect(result).to eq(response_body)
     end
+  end
 
-    it "returns true" do
-      response = partitions.release(
-        collection_name: "book",
-        partition_names: ["test"]
-      )
-      expect(response).to eq(true)
+  describe "#get_stats" do
+    let(:collection_name) { "test_collection" }
+    let(:partition_name) { "test_partition" }
+    let(:response_body) { File.read("spec/fixtures/partitions/get_stats.json") }
+    let(:response) { instance_double("Faraday::Response", body: response_body) }
+
+    it "gets the number of entities in a partition" do
+      expect(connection).to receive(:post).with("partitions/get_stats").and_return(response)
+      result = partitions.get_stats(collection_name: collection_name, partition_name: partition_name)
+      expect(result).to eq(response_body)
     end
   end
 end
