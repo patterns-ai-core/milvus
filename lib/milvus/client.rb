@@ -8,16 +8,9 @@ module Milvus
 
     API_VERSION = "v2/vectordb"
 
-    def initialize(
-      url:,
-      api_key: nil
-    )
+    def initialize(url:, api_key: nil)
       @url = url
       @api_key = api_key
-    end
-
-    def health
-      @health ||= Milvus::Health.new(client: self).get
     end
 
     def collections
@@ -34,18 +27,6 @@ module Milvus
 
     def indexes
       @indexes ||= Milvus::Indexes.new(client: self)
-    end
-
-    def search(...)
-      @search ||= Milvus::Search.new(client: self).post(...)
-    end
-
-    def hybrid_search(...)
-      @search ||= Milvus::HybridSearch.new(client: self).post(...)
-    end
-
-    def query(...)
-      @query ||= Milvus::Query.new(client: self).post(...)
     end
 
     def connection
