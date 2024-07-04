@@ -37,7 +37,7 @@ If bundler is not being used to manage dependencies, install the gem by executin
 require 'milvus'
 
 client = Milvus::Client.new(
-    url: 'http://localhost:9091'
+    url: 'http://localhost:19530'
 )
 ```
 
@@ -53,40 +53,37 @@ client.collections.create(
   auto_id: false,
   fields: [
     {
-      "name": "book_id",
+      "fieldName": "book_id",
       "description": "book id",
-      "is_primary_key": true,
+      "isPrimary": true,
       "autoID": false,
-      "data_type": Milvus::DATA_TYPES["int64"]
+      "dataType": "Int64"
     },
     {
-      "name": "word_count",
+      "fieldName": "word_count",
       "description": "count of words",
-      "is_primary_key": false,
-      "data_type": Milvus::DATA_TYPES["int64"]
+      "isPrimary": false,
+      "dataType": "Int64"
     },
     {
-      "name": "book_intro",
+      "fieldName": "book_intro",
       "description": "embedded vector of book introduction",
-      "data_type": Milvus::DATA_TYPES["binary_vector"],
-      "is_primary_key": false,
-      "type_params": [
-        {
-          "key": "dim",
-          "value": "2"
-        }
-      ]
+      "dataType": "FloatVector",
+      "isPrimary": false,
+      "elementTypeParams": {
+        "dim": "2"
+      }
     }
   ]
 )
 ```
 ```ruby
-# Get the collection info
-client.collections.get(collection_name: "book")
+# Descrbie the collection
+client.collections.describe(collection_name: "book")
 ```
 ```ruby
-# Delete the collection
-client.collections.delete(collection_name: "book")
+# Drop the collection
+client.collections.drop(collection_name: "book")
 ```
 ```ruby
 # Load the collection to memory before a search or a query

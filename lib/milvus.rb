@@ -10,6 +10,7 @@ module Milvus
   autoload :Error, "milvus/error"
   autoload :Entities, "milvus/entities"
   autoload :Health, "milvus/health"
+  autoload :HybridSearch, "milvus/hybrid_search"
   autoload :Indices, "milvus/indices"
   autoload :Partitions, "milvus/partitions"
   autoload :Search, "milvus/search"

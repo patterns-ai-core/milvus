@@ -6,7 +6,7 @@ module Milvus
   class Client
     attr_reader :url, :api_key
 
-    API_VERSION = "api/v1"
+    API_VERSION = "v2/vectordb"
 
     def initialize(
       url:,
@@ -38,6 +38,10 @@ module Milvus
 
     def search(...)
       @search ||= Milvus::Search.new(client: self).post(...)
+    end
+
+    def hybrid_search(...)
+      @search ||= Milvus::HybridSearch.new(client: self).post(...)
     end
 
     def query(...)
