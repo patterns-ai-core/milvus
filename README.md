@@ -47,17 +47,15 @@ client = Milvus::Client.new(
 ### Using the Collections endpoints
 ```ruby
 # Check if the collection exists.
-client.collections.has(collection_name: "book")
+client.collections.has(collection_name: "example_collection")
 ```
-
 ```ruby
 # Rename a collection.
-client.collections.rename(collection_name: "book", new_collection_name: "note")
+client.collections.rename(collection_name: "example_collection", new_collection_name: "example_collection")
 ```
-
 ```ruby
 # Get collection stats
-client.collections.get_stats(collection_name: "book")
+client.collections.get_stats(collection_name: "example_collection")
 ```
 
 ```ruby
@@ -65,30 +63,31 @@ client.collections.get_stats(collection_name: "book")
 
 # Creating a new collection schema
 client.collections.create(
-  collection_name: "book",
-  description: "Test book search",
-  auto_id: false,
+  collection_name: "example_collection",
+  description: "Book search",
+  auto_id: true,
   fields: [
     {
-      "fieldName": "book_id",
-      "description": "book id",
-      "isPrimary": true,
-      "autoID": false,
-      "dataType": "Int64"
+      fieldName: "book_id",
+      description: "Book ID",
+      isPrimary: true,
+      autoID: false,
+      dataType: "Int64"
     },
     {
-      "fieldName": "word_count",
-      "description": "count of words",
-      "isPrimary": false,
-      "dataType": "Int64"
+      fieldName: "content",
+      description: "Chunk Content",
+      dataType: "VarChar",
+      elementTypeParams: {
+        max_length: "512"
+      }
     },
     {
-      "fieldName": "book_intro",
-      "description": "embedded vector of book introduction",
-      "dataType": "FloatVector",
-      "isPrimary": false,
-      "elementTypeParams": {
-        "dim": "2"
+      fieldName: "vector",
+      description: "Chunk Embedding",
+      dataType: "FloatVector",
+      elementTypeParams: {
+        dim: 1536
       }
     }
   ]
@@ -96,15 +95,19 @@ client.collections.create(
 ```
 ```ruby
 # Descrbie the collection
-client.collections.describe(collection_name: "book")
+client.collections.describe(collection_name: "example_collection")
 ```
 ```ruby
 # Drop the collection
-client.collections.drop(collection_name: "book")
+client.collections.drop(collection_name: "example_collection")
 ```
 ```ruby
 # Load the collection to memory before a search or a query
-client.collections.load(collection_name: "book")
+client.collections.load(collection_name: "example_collection")
+```
+```ruby
+# Load status of a specific collection.
+client.collections.get_load_state(collection_name: "example_collection")
 ```
 ```ruby
 # List all collections in the specified database.
@@ -112,64 +115,49 @@ client.collections.list
 ```
 ```ruby
 # Release a collection from memory after a search or a query to reduce memory usage
-client.collections.release(collection_name: "book")
+client.collections.release(collection_name: "example_collection")
 ```
 
 ### Inserting Data
 ```ruby
 client.entities.insert(
-  collection_name: "book",
-  num_rows: 5, # Number of rows to be inserted. The number should be the same as the length of each field array.
-  fields_data: [
-    {
-      "field_name": "book_id",
-      "type": Milvus::DATA_TYPES["int64"],
-      "field": [1,2,3,4,5]
-    },
-    {
-      "field_name": "word_count",
-      "type": Milvus::DATA_TYPES["int64"],
-      "field": [1000,2000,3000,4000,5000]
-    },
-    {
-      "field_name": "book_intro",
-      "type": 101,
-      "field": [ [1,1],[2,1],[3,1],[4,1],[5,1] ]
-    }
+  collection_name: "example_collection",
+  data: [
+    { id: 1, content: "The quick brown fox jumps over the lazy dog", vector: ([0.1]*1536) },
+    { id: 2, content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit", vector: ([0.2]*1536) },
+    { id: 3, content: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua", vector: ([0.3]*1536) }
   ]  
 )
 ```
 ```ruby
 # Delete the entities with the boolean expression you created
 client.entities.delete(
-  collection_name: "book",
+  collection_name: "example_collection",
   expression: "book_id in [0,1]"
 )
 ```
 ```ruby
-# Compact data manually
-client.entities.compact!(
-  collection_id: "book"
-)
-# => {"status"=>{}, "compactionID"=>440928616022809499}
+# Inserts new records into the database or updates existing ones.
+client.entities.upsert()
 ```
 ```ruby
-# Check compaction status
-client.entities.compact_status(
-  compaction_id: 440928616022809499
-)
-# => {"status"=>{}, "state"=>2}
+# Get specific entities by their IDs
+client.entities.get()
 ```
 
 ### Indexes
 ```ruby
 # Create an index
-index_params = {
-  fieldName: "example_field",
-  indexType: "IVF_FLAT",
-  metricType: "L2",
-  params: { nlist: 100 }
-}
+index_params = [
+  {
+    metricType: "L2",
+    fieldName: "vector",
+    indexName: "vector_idx",
+    indexConfig: {
+      index_type: "AUTOINDEX"
+    }
+  }
+]
 
 client.indexes.create(
   collection_name: "example_collection",
@@ -200,7 +188,7 @@ client.indexes.drop(
 ### Search, Querying & Hybrid Search
 ```ruby
 client.entities.search(
-  collection_name: "recipes",
+  collection_name: "example_collection",
   anns_field: "vectors",
   data: [embedding],
   filter: "id in [450847466900987454]"
@@ -208,13 +196,13 @@ client.entities.search(
 ```
 ```ruby
 client.entities.query(
-  collection_name: "recipes",
+  collection_name: "example_collection",
   filter: "id in [450847466900987455, 450847466900987454]"
 )
 ```
 ```ruby
 client.entities.hybrid_search(
-  collection_name: "recipes",
+  collection_name: "example_collection",
   search: [{
     filter: "id in [450847466900987455]",
     data: [embedding],
