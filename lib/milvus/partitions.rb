@@ -91,6 +91,7 @@ module Milvus
 
     # This operations gets the number of entities in a partition.
     #
+    # @param collection_name [String] The name of the collection to get the number of entities in.
     # @param partition_name [String] The name of the partition to get the number of entities in.
     # @return [Hash] Server response
     def get_stats(collection_name:, partition_name:)

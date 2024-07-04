@@ -111,6 +111,16 @@ module Milvus
       response.body.empty? ? true : response.body
     end
 
+    # This operation conducts a vector similarity search with an optional scalar filtering expression.
+    #
+    # @param collection_name [String] The name of the collection to search.
+    # @param data [Array<Array<Float>>] The data to search for.
+    # @param anns_field [String] The field to search for.
+    # @param limit [Integer] The maximum number of results to return.
+    # @param output_fields [Array<String>] The fields to return in the results.
+    # @param offset [Integer] The offset to start from.
+    # @param filter [String] The filter to use to search the collection.
+    # @return [Hash] The search results.
     def search(
       collection_name:,
       data:,
@@ -142,7 +152,6 @@ module Milvus
     # @param rerank [Hash] The rerank parameters.
     # @param limit [Integer] The maximum number of results to return.
     # @param output_fields [Array<String>] The fields to return in the results.
-    #
     # @return [Hash] The search results.
     def hybrid_search(
       collection_name:,
