@@ -92,7 +92,7 @@ RSpec.describe Milvus::Entities do
         collection_name: collection_name,
         data: [[0.1, 0.2, 0.3]],
         output_fields: ["content"],
-        anns_field: "vectors",
+        anns_field: "vectors"
       )
       expect(result).to eq(response_body)
     end
