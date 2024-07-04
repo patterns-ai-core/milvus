@@ -6,18 +6,11 @@ module Milvus
   class Client
     attr_reader :url, :api_key
 
-    API_VERSION = "api/v1"
+    API_VERSION = "v2/vectordb"
 
-    def initialize(
-      url:,
-      api_key: nil
-    )
+    def initialize(url:, api_key: nil)
       @url = url
       @api_key = api_key
-    end
-
-    def health
-      @health ||= Milvus::Health.new(client: self).get
     end
 
     def collections
@@ -32,16 +25,8 @@ module Milvus
       @entities ||= Milvus::Entities.new(client: self)
     end
 
-    def indices
-      @indices ||= Milvus::Indices.new(client: self)
-    end
-
-    def search(...)
-      @search ||= Milvus::Search.new(client: self).post(...)
-    end
-
-    def query(...)
-      @query ||= Milvus::Query.new(client: self).post(...)
+    def indexes
+      @indexes ||= Milvus::Indexes.new(client: self)
     end
 
     def connection

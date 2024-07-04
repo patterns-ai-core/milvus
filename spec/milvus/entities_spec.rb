@@ -1,104 +1,133 @@
-# frozen_string_literal: true
+# spec/milvus/entities_spec.rb
 
 require "spec_helper"
+require "faraday"
 
 RSpec.describe Milvus::Entities do
-  let(:client) {
-    Milvus::Client.new(
-      url: "http://localhost:9091"
-    )
-  }
-
-  let(:entities) { client.entities }
-  let(:entities_created_fixture) { JSON.parse(File.read("spec/fixtures/entities_created.json")) }
-  let(:entities_deleted_fixture) { JSON.parse(File.read("spec/fixtures/entities_deleted.json")) }
-  let(:compaction_fixture) { JSON.parse(File.read("spec/fixtures/compaction.json")) }
-  let(:status_fixture) { JSON.parse(File.read("spec/fixtures/status.json")) }
+  let(:client) { instance_double("Client", connection: connection) }
+  let(:connection) { instance_double("Faraday::Connection") }
+  let(:entities) { described_class.new(client: client) }
 
   describe "#insert" do
-    let(:response) { OpenStruct.new(body: entities_created_fixture) }
+    let(:collection_name) { "test_collection" }
+    let(:data) { [{field1: "value1"}] }
+    let(:response_body) { File.read("spec/fixtures/entities/insert.json") }
+    let(:response) { instance_double("Faraday::Response", body: response_body) }
 
-    before do
-      allow_any_instance_of(Faraday::Connection).to receive(:post)
-        .with(Milvus::Entities::PATH)
-        .and_return(response)
-    end
-
-    it "returns true" do
-      response = entities.insert(
-        collection_name: "book",
-        num_rows: 5,
-        fields_data: [
-          {
-            field_name: "book_id",
-            type: Milvus::DATA_TYPES["int64"],
-            field: [1, 2, 3, 4, 5]
-          },
-          {
-            field_name: "word_count",
-            type: Milvus::DATA_TYPES["int64"],
-            field: [1000, 2000, 3000, 4000, 5000]
-          },
-          {
-            field_name: "book_intro",
-            type: 101,
-            field: [[1, 1], [2, 1], [3, 1], [4, 1], [5, 1]]
-          }
-        ]
-      )
-      expect(response).to eq(entities_created_fixture)
+    it "inserts data into a specific collection" do
+      expect(connection).to receive(:post).with("entities/insert").and_return(response)
+      result = entities.insert(collection_name: collection_name, data: data)
+      expect(result).to eq(response_body)
     end
   end
 
   describe "#delete" do
-    let(:response) { OpenStruct.new(body: entities_deleted_fixture) }
+    let(:collection_name) { "test_collection" }
+    let(:filter) { "id in [1, 2, 3]" }
+    let(:response_body) { File.read("spec/fixtures/entities/delete.json") }
+    let(:response) { instance_double("Faraday::Response", body: response_body) }
 
-    before do
-      allow_any_instance_of(Faraday::Connection).to receive(:delete)
-        .with(Milvus::Entities::PATH)
-        .and_return(response)
-    end
-
-    it "returns true" do
-      response = entities.delete(
-        collection_name: "book",
-        expression: "book_id in [0,1]"
-      )
-      expect(response).to eq(entities_deleted_fixture)
+    it "deletes entities by their IDs or with a boolean expression" do
+      expect(connection).to receive(:post).with("entities/delete").and_return(response)
+      result = entities.delete(collection_name: collection_name, filter: filter)
+      expect(result).to eq(response_body)
     end
   end
 
-  describe "#compact" do
-    let(:response) { OpenStruct.new(body: compaction_fixture) }
+  describe "#query" do
+    let(:collection_name) { "test_collection" }
+    let(:filter) { "field1 > 10" }
+    let(:output_fields) { ["field1", "field2"] }
+    let(:limit) { 10 }
+    let(:response_body) { File.read("spec/fixtures/entities/query.json") }
+    let(:response) { instance_double("Faraday::Response", body: response_body) }
 
-    before do
-      allow_any_instance_of(Faraday::Connection).to receive(:post)
-        .with("compaction")
-        .and_return(response)
-    end
-
-    it "returns true" do
-      response = entities.compact!(
-        collection_id: 440928616022607200
-      )
-      expect(response).to eq(compaction_fixture)
+    it "conducts a filtering on the scalar field with a specified boolean expression" do
+      expect(connection).to receive(:post).with("entities/query").and_return(response)
+      result = entities.query(collection_name: collection_name, filter: filter, output_fields: output_fields, limit: limit)
+      expect(result).to be true
     end
   end
 
-  describe "#compact_status" do
-    let(:response) { OpenStruct.new(body: status_fixture) }
+  describe "#upsert" do
+    let(:collection_name) { "test_collection" }
+    let(:data) { [{field1: "value1"}] }
+    let(:response_body) { File.read("spec/fixtures/entities/upsert.json") }
+    let(:response) { instance_double("Faraday::Response", body: response_body) }
 
-    before do
-      allow_any_instance_of(Faraday::Connection).to receive(:get)
-        .with("compaction/state")
-        .and_return(response)
+    it "inserts new records into the database or updates existing ones" do
+      expect(connection).to receive(:post).with("entities/upsert").and_return(response)
+      result = entities.upsert(collection_name: collection_name, data: data)
+      expect(result).to eq(response_body)
     end
+  end
 
-    it "returns true" do
-      response = entities.compact_status(
-        compaction_id: 440928616022607200
+  describe "#get" do
+    let(:collection_name) { "test_collection" }
+    let(:id) { [450847466900987461] }
+    let(:output_fields) { ["field1", "field2"] }
+    let(:response_body) { File.read("spec/fixtures/entities/get.json") }
+    let(:response) { instance_double("Faraday::Response", body: response_body) }
+
+    it "gets specific entities by their IDs" do
+      expect(connection).to receive(:post).with("entities/get").and_return(response)
+      result = entities.get(collection_name: collection_name, id: id, output_fields: output_fields)
+      expect(result).to eq(response_body)
+    end
+  end
+
+  describe "#search" do
+    let(:collection_name) { "test_collection" }
+    let(:search) { {query: "test_query"} }
+    let(:rerank) { {method: "test_method"} }
+    let(:annsField) { "test_field" }
+    let(:limit) { 10 }
+    let(:output_fields) { ["field1", "field2"] }
+    let(:response_body) { File.read("spec/fixtures/entities/search.json") }
+    let(:response) { instance_double("Faraday::Response", body: response_body) }
+
+    it "executes a search" do
+      expect(connection).to receive(:post).with("entities/search").and_return(response)
+      result = entities.search(
+        collection_name: collection_name,
+        data: [[0.1, 0.2, 0.3]],
+        output_fields: ["content"],
+        anns_field: "vectors"
       )
-      expect(response).to eq(status_fixture)
+      expect(result).to eq(response_body)
+    end
+  end
+
+  describe "#hybrid_search" do
+    let(:collection_name) { "test_collection" }
+    let(:search) do
+      [
+        {
+          filter: "id in [450847466900987455]",
+          data: [[0.1, 0.2, 0.3]],
+          annsField: "vectors",
+          limit: 10,
+          outputFields: ["content", "id"]
+        }
+      ]
+    end
+    let(:rerank) do
+      {
+        strategy: "rrf",
+        params: {
+          k: 10
+        }
+      }
+    end
+    let(:limit) { 10 }
+    let(:output_fields) { ["field1", "field2"] }
+    let(:response_body) { File.read("spec/fixtures/entities/hybrid_search.json") }
+    let(:response) { instance_double("Faraday::Response", body: response_body) }
+
+    it "executes a hybrid search" do
+      expect(connection).to receive(:post).with("entities/hybrid_search").and_return(response)
+      result = entities.hybrid_search(collection_name: collection_name, search: search, rerank: rerank, limit: limit, output_fields: output_fields)
+      expect(result).to eq(response_body)
     end
   end
 end

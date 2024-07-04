@@ -9,9 +9,6 @@ module Milvus
   autoload :Client, "milvus/client"
   autoload :Error, "milvus/error"
   autoload :Entities, "milvus/entities"
-  autoload :Health, "milvus/health"
-  autoload :Indices, "milvus/indices"
+  autoload :Indexes, "milvus/indexes"
   autoload :Partitions, "milvus/partitions"
-  autoload :Search, "milvus/search"
-  autoload :Query, "milvus/query"
 end

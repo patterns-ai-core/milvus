@@ -2,68 +2,104 @@
 
 module Milvus
   class Partitions < Base
-    PATH = "partition"
+    PATH = "partitions"
 
-    # Create a partition
+    # This operation lists all partitions in the database used in the current connection.
+    #
+    # @param collection_name [String] The name of the collection.
+    # @return [Hash] Server response
+    def list(collection_name:)
+      response = client.connection.post("#{PATH}/list") do |req|
+        req.body = {collectionName: collection_name}
+      end
+      response.body.empty? ? true : response.body
+    end
+
+    # This operation creates a partition in a collection.
+    #
+    # @param collection_name [String] The name of the collection to create the partition in.
+    # @param partition_name [String] The name of the partition to create.
     def create(collection_name:, partition_name:)
-      response = client.connection.post(PATH) do |req|
+      response = client.connection.post("#{PATH}/create") do |req|
         req.body = {
-          collection_name: collection_name,
-          partition_name: partition_name
+          collectionName: collection_name,
+          partitionName: partition_name
         }
       end
       response.body.empty? ? true : response.body
     end
 
-    # Verify if a partition exists
-    def get(collection_name:, partition_name:)
-      response = client.connection.get("#{PATH}/existence") do |req|
+    # This operation drops the current partition. To successfully drop a partition, ensure that the partition is already released.
+    #
+    # @param collection_name [String] The name of the collection to drop the partition from.
+    # @param partition_name [String] The name of the partition to drop.
+    # @return [Hash] Server response
+    def drop(collection_name:, partition_name:)
+      response = client.connection.post("#{PATH}/drop") do |req|
         req.body = {
-          collection_name: collection_name,
-          partition_name: partition_name
+          collectionName: collection_name,
+          partitionName: partition_name
         }
       end
       response.body.empty? ? true : response.body
     end
 
-    # Dropping a partition
-    def delete(collection_name:, partition_name:)
-      response = client.connection.delete(PATH) do |req|
+    # This operation checks whether a partition exists.
+    #
+    # @param collection_name [String] The name of the collection to check for the partition in.
+    # @param partition_name [String] The name of the partition to check.
+    # @return [Hash] Server response
+    def has(collection_name:, partition_name:)
+      response = client.connection.post("#{PATH}/has") do |req|
         req.body = {
-          collection_name: collection_name,
-          partition_name: partition_name
+          collectionName: collection_name,
+          partitionName: partition_name
         }
       end
       response.body.empty? ? true : response.body
     end
 
-    # Load a Partition
-    def load(
-      collection_name:,
-      partition_names:,
-      replica_number: nil
-    )
-      response = client.connection.post("#{PATH}s/load") do |req|
+    # This operation loads the data of the current partition into memory.
+    #
+    # @param collection_name [String] The name of the collection to load.
+    # @param partition_names [Array<String>] The names of the partitions to load.
+    # @return [Hash] Server response
+    def load(collection_name:, partition_names:)
+      response = client.connection.post("#{PATH}/load") do |req|
         req.body = {
-          collection_name: collection_name,
-          partition_names: partition_names
+          collectionName: collection_name,
+          partitionNames: partition_names
         }
-        req.body[:replica_number] = replica_number if replica_number
       end
       response.body.empty? ? true : response.body
     end
 
-    def release(
-      collection_name:,
-      partition_names:,
-      replica_number: nil
-    )
-      response = client.connection.delete("#{PATH}s/load") do |req|
+    # This operation releases the data of the current partition from memory.
+    #
+    # @param collection_name [String] The name of the collection to release.
+    # @param partition_name [String] The name of the partition to release.
+    # @return [Hash] Server response
+    def release(collection_name:, partition_names:)
+      response = client.connection.post("#{PATH}/release") do |req|
         req.body = {
-          collection_name: collection_name,
-          partition_names: partition_names
+          collectionName: collection_name,
+          partitionNames: partition_names
         }
-        req.body[:replica_number] = replica_number if replica_number
+      end
+      response.body.empty? ? true : response.body
+    end
+
+    # This operations gets the number of entities in a partition.
+    #
+    # @param collection_name [String] The name of the collection to get the number of entities in.
+    # @param partition_name [String] The name of the partition to get the number of entities in.
+    # @return [Hash] Server response
+    def get_stats(collection_name:, partition_name:)
+      response = client.connection.post("#{PATH}/get_stats") do |req|
+        req.body = {
+          collectionName: collection_name,
+          partitionName: partition_name
+        }
       end
       response.body.empty? ? true : response.body
     end

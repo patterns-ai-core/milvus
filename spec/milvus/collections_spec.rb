@@ -1,116 +1,147 @@
-# frozen_string_literal: true
+# spec/milvus/collections_spec.rb
 
 require "spec_helper"
+require "faraday"
 
 RSpec.describe Milvus::Collections do
-  let(:client) {
-    Milvus::Client.new(
-      url: "http://localhost:9091"
-    )
-  }
+  let(:client) { instance_double("Client", connection: connection) }
+  let(:connection) { instance_double("Faraday::Connection") }
+  let(:collections) { described_class.new(client: client) }
 
-  let(:collections) { client.collections }
-  let(:collection_fixture) { JSON.parse(File.read("spec/fixtures/collection.json")) }
+  describe "#has" do
+    let(:collection_name) { "test_collection" }
+    let(:response_body) { File.read("spec/fixtures/collections/has.json") }
+    let(:response) { instance_double("Faraday::Response", body: response_body) }
+
+    it "checks whether a collection exists" do
+      expect(connection).to receive(:post).with("collections/has").and_yield(Faraday::Request.new).and_return(response)
+      result = collections.has(collection_name: collection_name)
+      expect(result).to eq(response_body)
+    end
+  end
+
+  describe "#rename" do
+    let(:collection_name) { "test_collection" }
+    let(:new_collection_name) { "new_test_collection" }
+
+    context "when the rename is successful" do
+      let(:response_body) { File.read("spec/fixtures/collections/rename.json") }
+      let(:response) { instance_double("Faraday::Response", body: response_body) }
+
+      it "renames an existing collection" do
+        expect(connection).to receive(:post).with("collections/rename").and_return(response)
+        result = collections.rename(collection_name: collection_name, new_collection_name: new_collection_name)
+        expect(result).to eq(response_body)
+      end
+    end
+
+    context "when the rename fails" do
+      let(:response_body) { File.read("spec/fixtures/collections/rename_error.json") }
+      let(:response) { instance_double("Faraday::Response", body: response_body) }
+
+      it "returns an error message" do
+        expect(connection).to receive(:post).with("collections/rename").and_return(response)
+        result = collections.rename(collection_name: collection_name, new_collection_name: new_collection_name)
+        expect(result).to eq(response_body)
+      end
+    end
+  end
+
+  describe "#get_stats" do
+    let(:collection_name) { "test_collection" }
+    let(:response_body) { File.read("spec/fixtures/collections/get_stats.json") }
+    let(:response) { instance_double("Faraday::Response", body: response_body) }
+
+    it "gets the number of entities in a collection" do
+      expect(connection).to receive(:post).with("collections/get_stats").and_yield(Faraday::Request.new).and_return(response)
+      result = collections.get_stats(collection_name: collection_name)
+      expect(result).to eq(response_body)
+    end
+  end
 
   describe "#create" do
-    let(:response) { OpenStruct.new(body: {}) }
+    let(:collection_name) { "test_collection" }
+    let(:auto_id) { true }
+    let(:description) { "Test collection" }
+    let(:fields) { [{name: "field1", type: "int64"}] }
+    let(:response_body) { File.read("spec/fixtures/collections/create.json") }
+    let(:response) { instance_double("Faraday::Response", body: response_body) }
 
-    before do
-      allow_any_instance_of(Faraday::Connection).to receive(:post)
-        .with(Milvus::Collections::PATH)
-        .and_return(response)
-    end
-
-    it "returns true" do
-      response = collections.create(
-        collection_name: "book",
-        description: "Test book search",
-        auto_id: false,
-        fields: [
-          {
-            name: "book_id",
-            description: "book id",
-            is_primary_key: true,
-            autoID: false,
-            data_type: Milvus::DATA_TYPES["int64"]
-          },
-          {
-            name: "word_count",
-            description: "count of words",
-            is_primary_key: false,
-            data_type: Milvus::DATA_TYPES["int64"]
-          },
-          {
-            name: "book_intro",
-            description: "embedded vector of book introduction",
-            data_type: Milvus::DATA_TYPES["binary_vector"],
-            is_primary_key: false,
-            type_params: [
-              {
-                key: "dim",
-                value: "2"
-              }
-            ]
-          }
-        ]
-      )
-      expect(response).to eq(true)
+    it "creates a collection" do
+      expect(connection).to receive(:post).with("collections/create").and_return(response)
+      result = collections.create(collection_name: collection_name, auto_id: auto_id, description: description, fields: fields)
+      expect(result).to eq(response_body)
     end
   end
 
-  describe "#delete" do
-    let(:response) { OpenStruct.new(body: {}) }
+  describe "#describe" do
+    let(:collection_name) { "test_collection" }
+    let(:response_body) { File.read("spec/fixtures/collections/describe.json") }
+    let(:response) { instance_double("Faraday::Response", body: response_body) }
 
-    before do
-      allow_any_instance_of(Faraday::Connection).to receive(:delete)
-        .with(Milvus::Collections::PATH)
-        .and_return(response)
-    end
-
-    it "returns true" do
-      expect(collections.delete(collection_name: "book")).to eq(true)
+    it "describes the details of a collection" do
+      expect(connection).to receive(:post).with("collections/describe").and_yield(Faraday::Request.new).and_return(response)
+      result = collections.describe(collection_name: collection_name)
+      expect(result).to eq(response_body)
     end
   end
 
-  describe "#get" do
-    let(:response) { OpenStruct.new(body: collection_fixture) }
+  describe "#list" do
+    let(:response_body) { File.read("spec/fixtures/collections/list.json") }
+    let(:response) { instance_double("Faraday::Response", body: response_body) }
 
-    before do
-      allow_any_instance_of(Faraday::Connection).to receive(:get)
-        .with(Milvus::Collections::PATH)
-        .and_return(response)
+    it "lists all collections in the specified database" do
+      expect(connection).to receive(:post).with("collections/list").and_yield(Faraday::Request.new).and_return(response)
+      result = collections.list
+      expect(result).to eq(response_body)
     end
+  end
 
-    it "returns a collection" do
-      expect(collections.get(collection_name: "book")).to eq(collection_fixture)
+  describe "#drop" do
+    let(:collection_name) { "test_collection" }
+    let(:response_body) { File.read("spec/fixtures/collections/drop.json") }
+    let(:response) { instance_double("Faraday::Response", body: response_body) }
+
+    it "drops the current collection and all data within the collection" do
+      expect(connection).to receive(:post).with("collections/drop").and_return(response)
+      result = collections.drop(collection_name: collection_name)
+      expect(result).to eq(response_body)
     end
   end
 
   describe "#load" do
-    let(:response) { OpenStruct.new(body: {}) }
+    let(:collection_name) { "test_collection" }
+    let(:response_body) { File.read("spec/fixtures/collections/load.json") }
+    let(:response) { instance_double("Faraday::Response", body: response_body) }
 
-    before do
-      allow_any_instance_of(Faraday::Connection).to receive(:post)
-        .with("#{Milvus::Collections::PATH}/load")
-        .and_return(response)
+    it "loads the collection to memory" do
+      expect(connection).to receive(:post).with("collections/load").and_return(response)
+      result = collections.load(collection_name: collection_name)
+      expect(result).to eq(response_body)
     end
+  end
 
-    it "returns true" do
-      expect(collections.load(collection_name: "book")).to eq(true)
+  describe "#get_load_state" do
+    let(:collection_name) { "test_collection" }
+    let(:response_body) { File.read("spec/fixtures/collections/get_load_state.json") }
+    let(:response) { instance_double("Faraday::Response", body: response_body) }
+
+    it "returns the load status of a specific collection" do
+      expect(connection).to receive(:post).with("collections/get_load_state").and_yield(Faraday::Request.new).and_return(response)
+      result = collections.get_load_state(collection_name: collection_name)
+      expect(result).to eq(response_body)
     end
   end
 
   describe "#release" do
-    let(:response) { OpenStruct.new(body: {}) }
+    let(:collection_name) { "test_collection" }
+    let(:response_body) { File.read("spec/fixtures/collections/release.json") }
+    let(:response) { instance_double("Faraday::Response", body: response_body) }
 
-    before do
-      allow_any_instance_of(Faraday::Connection).to receive(:delete)
-        .with("#{Milvus::Collections::PATH}/load")
-        .and_return(response)
-    end
-
-    it "returns true" do
-      expect(collections.release(collection_name: "book")).to eq(true)
+    it "releases a collection from memory" do
+      expect(connection).to receive(:post).with("collections/release").and_return(response)
+      result = collections.release(collection_name: collection_name)
+      expect(result).to eq(response_body)
     end
   end
 end

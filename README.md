@@ -19,6 +19,9 @@ Available for paid consulting engagements! [Email me](mailto:andrei@sourcelabs.i
 [![](https://dcbadge.vercel.app/api/server/WDARp7J2n8?compact=true&style=flat)](https://discord.gg/WDARp7J2n8)
 [![X](https://img.shields.io/twitter/url/https/twitter.com/cloudposse.svg?style=social&label=Follow%20%40rushing_andrei)](https://twitter.com/rushing_andrei)
 
+## API Docs
+https://docs.zilliz.com/reference/restful/data-plane-v2
+
 ## Installation
 
 Install the gem and add to the application's Gemfile by executing:
@@ -37,11 +40,25 @@ If bundler is not being used to manage dependencies, install the gem by executin
 require 'milvus'
 
 client = Milvus::Client.new(
-    url: 'http://localhost:9091'
+    url: 'http://localhost:19530'
 )
 ```
 
 ### Using the Collections endpoints
+```ruby
+# Check if the collection exists.
+client.collections.has(collection_name: "book")
+```
+
+```ruby
+# Rename a collection.
+client.collections.rename(collection_name: "book", new_collection_name: "note")
+```
+
+```ruby
+# Get collection stats
+client.collections.get_stats(collection_name: "book")
+```
 
 ```ruby
 # Data types: https://github.com/patterns-ai-core/milvus/blob/main/lib/milvus/constants.rb
@@ -53,44 +70,45 @@ client.collections.create(
   auto_id: false,
   fields: [
     {
-      "name": "book_id",
+      "fieldName": "book_id",
       "description": "book id",
-      "is_primary_key": true,
+      "isPrimary": true,
       "autoID": false,
-      "data_type": Milvus::DATA_TYPES["int64"]
+      "dataType": "Int64"
     },
     {
-      "name": "word_count",
+      "fieldName": "word_count",
       "description": "count of words",
-      "is_primary_key": false,
-      "data_type": Milvus::DATA_TYPES["int64"]
+      "isPrimary": false,
+      "dataType": "Int64"
     },
     {
-      "name": "book_intro",
+      "fieldName": "book_intro",
       "description": "embedded vector of book introduction",
-      "data_type": Milvus::DATA_TYPES["binary_vector"],
-      "is_primary_key": false,
-      "type_params": [
-        {
-          "key": "dim",
-          "value": "2"
-        }
-      ]
+      "dataType": "FloatVector",
+      "isPrimary": false,
+      "elementTypeParams": {
+        "dim": "2"
+      }
     }
   ]
 )
 ```
 ```ruby
-# Get the collection info
-client.collections.get(collection_name: "book")
+# Descrbie the collection
+client.collections.describe(collection_name: "book")
 ```
 ```ruby
-# Delete the collection
-client.collections.delete(collection_name: "book")
+# Drop the collection
+client.collections.drop(collection_name: "book")
 ```
 ```ruby
 # Load the collection to memory before a search or a query
 client.collections.load(collection_name: "book")
+```
+```ruby
+# List all collections in the specified database.
+client.collections.list
 ```
 ```ruby
 # Release a collection from memory after a search or a query to reduce memory usage
@@ -143,91 +161,126 @@ client.entities.compact_status(
 # => {"status"=>{}, "state"=>2}
 ```
 
-### Indices
+### Indexes
 ```ruby
-client.indices.create(
-  collection_name: "book",
-  field_name: "book_intro",
-  extra_params: [
-    { key: "metric_type", "value": "L2" },
-    { key: "index_type", "value": "IVF_FLAT" },
-    { key: "params", "value": "{\"nlist\":1024}" }
-  ]
+# Create an index
+index_params = {
+  fieldName: "example_field",
+  indexType: "IVF_FLAT",
+  metricType: "L2",
+  params: { nlist: 100 }
+}
+
+client.indexes.create(
+  collection_name: "example_collection",
+  index_params: index_params
 )
 ```
 ```ruby
-collection.indices.create(
-  field_name: "book_name", 
-  index_name: "scalar_index",
+# Describe an index
+client.indexes.describe(
+  collection_name: "example_collection",
+  index_name: "example_index"
 )
 ```
 ```ruby
-client.indices.delete(
-  collection_name: "book",
-  field_name: "book_intro"
+# List indexes
+client.indexes.list(
+  collection_name: "example_collection"
+)
+```
+```ruby
+# Drop an index
+client.indexes.drop(
+  collection_name: "example_collection",
+  index_name: "example_index"
 )
 ```
 
-### Search & Querying
+### Search, Querying & Hybrid Search
 ```ruby
-client.search(
-  collection_name: "book",
-  output_fields: ["book_id"], # optional
-  anns_field: "book_intro",
-  top_k: "2",
-  params: "{\"nprobe\": 10}",
-  metric_type: "L2",
-  round_decimal: "-1",
-  vectors: [ [0.1,0.2] ],
-  dsl_type: 1
+client.entities.search(
+  collection_name: "recipes",
+  anns_field: "vectors",
+  data: [embedding],
+  filter: "id in [450847466900987454]"
 )
 ```
 ```ruby
-client.query(
-  collection_name: "book",
-  output_fields: ["book_id", "book_intro"],
-  expr: "book_id in [2,4,6,8]"
+client.entities.query(
+  collection_name: "recipes",
+  filter: "id in [450847466900987455, 450847466900987454]"
+)
+```
+```ruby
+client.entities.hybrid_search(
+  collection_name: "recipes",
+  search: [{
+    filter: "id in [450847466900987455]",
+    data: [embedding],
+    annsField: "vectors",
+    limit: 10,
+    outputFields: ["content", "id"]
+  }],
+  rerank: {
+    "strategy": "rrf",
+    "params": {
+      "k": 10
+    }
+  },
+  limit: 10,
+  output_fields: ["content", "id"]
 )
 ```
 
 ### Partitions
 ```ruby
+# List partitions
+client.partitions.list(
+  collection_name: "example_collection"
+)
+```
+```ruby
+# Create a partition
 client.partitions.create(
-  "collection_name": "book",
-  "partition_name": "novel"
+  collection_name: "example_collection",
+  partition_name: "example_partition"
 )
 ```
 ```ruby
-client.partitions.get(
-  "collection_name": "book",
-  "partition_name": "novel"
+# Check if a partition exists
+client.partitions.has(
+  collection_name: "example_collection",
+  partition_name: "example_partition"
 )
 ```
 ```ruby
-client.partitions.delete(
-  "collection_name": "book",
-  "partition_name": "novel"
-)
-```
-```ruby
+# Load partition data into memory
 client.partitions.load(
-  "collection_name": "book",
-  "partition_names": ["novel"],
-  "replica_number": 1
+  collection_name: "example_collection",
+  partition_names: ["example_partition"]
 )
 ```
 ```ruby
+# Release partition data from memory
 client.partitions.release(
-  "collection_name": "book",
-  "partition_names": ["novel"],
-  "replica_number": 1
+  collection_name: "example_collection",
+  partition_names: ["example_partition"]
 )
 ```
-
-### Health
 ```ruby
-# Live determines whether the application is alive. It can be used for Kubernetes liveness probe.
-client.health
+# Get statistics of a partition
+client.partitions.get_stats(
+  collection_name: "example_collection",
+  partition_name: "example_partition"
+)
+```
+```ruby
+# Drop a partition
+client.partitions.drop(
+  collection_name: "example_collection",
+  partition_name: "example_partition"
+)
 ```
 
 ## Development
@@ -238,7 +291,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/andreibondarev/milvus.
+Bug reports and pull requests are welcome on GitHub at https://github.com/patterns-ai-core/milvus.
 
 ## License
 
