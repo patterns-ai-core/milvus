@@ -62,14 +62,13 @@ RSpec.describe Milvus::Collections do
   describe "#create" do
     let(:collection_name) { "test_collection" }
     let(:auto_id) { true }
-    let(:description) { "Test collection" }
     let(:fields) { [{name: "field1", type: "int64"}] }
     let(:response_body) { File.read("spec/fixtures/collections/create.json") }
     let(:response) { instance_double("Faraday::Response", body: response_body) }
 
     it "creates a collection" do
       expect(connection).to receive(:post).with("collections/create").and_return(response)
-      result = collections.create(collection_name: collection_name, auto_id: auto_id, description: description, fields: fields)
+      result = collections.create(collection_name: collection_name, auto_id: auto_id, fields: fields)
       expect(result).to eq(response_body)
     end
   end

@@ -17,7 +17,7 @@ module Milvus
         req.body = {
           collectionName: collection_name,
           indexParams: index_params
-        }.to_json
+        }
       end
       response.body.empty? ? true : response.body
     end
@@ -35,7 +35,7 @@ module Milvus
         req.body = {
           collectionName: collection_name,
           indexName: index_name
-        }.to_json
+        }
       end
       response.body.empty? ? true : response.body
     end
@@ -53,7 +53,7 @@ module Milvus
         req.body = {
           collectionName: collection_name,
           indexName: index_name
-        }.to_json
+        }
       end
       response.body.empty? ? true : response.body
     end
@@ -68,7 +68,7 @@ module Milvus
       response = client.connection.post("#{PATH}/list") do |req|
         req.body = {
           collectionName: collection_name
-        }.to_json
+        }
       end
       response.body.empty? ? true : response.body
     end

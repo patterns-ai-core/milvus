@@ -12,7 +12,7 @@ module Milvus
       response = client.connection.post("#{PATH}/has") do |req|
         req.body = {
           collectionName: collection_name
-        }.to_json
+        }
       end
       response.body
     end
@@ -40,7 +40,7 @@ module Milvus
       response = client.connection.post("#{PATH}/get_stats") do |req|
         req.body = {
           collectionName: collection_name
-        }.to_json
+        }
       end
       response.body
     end
@@ -55,7 +55,6 @@ module Milvus
     def create(
       collection_name:,
       auto_id:,
-      description:,
       fields:
     )
       response = client.connection.post("#{PATH}/create") do |req|
@@ -63,11 +62,10 @@ module Milvus
           collectionName: collection_name,
           schema: {
             autoId: auto_id,
-            description: description,
             fields: fields,
             name: collection_name # This duplicated field is kept for historical reasons.
           }
-        }.to_json
+        }
       end
       response.body.empty? ? true : response.body
     end
@@ -80,7 +78,7 @@ module Milvus
       response = client.connection.post("#{PATH}/describe") do |req|
         req.body = {
           collectionName: collection_name
-        }.to_json
+        }
       end
       response.body
     end
@@ -103,7 +101,7 @@ module Milvus
       response = client.connection.post("#{PATH}/drop") do |req|
         req.body = {
           collectionName: collection_name
-        }.to_json
+        }
       end
       response.body.empty? ? true : response.body
     end
@@ -142,7 +140,7 @@ module Milvus
       response = client.connection.post("#{PATH}/release") do |req|
         req.body = {
           collectionName: collection_name
-        }.to_json
+        }
       end
       response.body.empty? ? true : response.body
     end

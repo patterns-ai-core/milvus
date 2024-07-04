@@ -64,19 +64,16 @@ client.collections.get_stats(collection_name: "example_collection")
 # Creating a new collection schema
 client.collections.create(
   collection_name: "example_collection",
-  description: "Book search",
   auto_id: true,
   fields: [
     {
       fieldName: "book_id",
-      description: "Book ID",
       isPrimary: true,
       autoID: false,
       dataType: "Int64"
     },
     {
       fieldName: "content",
-      description: "Chunk Content",
       dataType: "VarChar",
       elementTypeParams: {
         max_length: "512"
@@ -84,7 +81,6 @@ client.collections.create(
     },
     {
       fieldName: "vector",
-      description: "Chunk Embedding",
       dataType: "FloatVector",
       elementTypeParams: {
         dim: 1536
