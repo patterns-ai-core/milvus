@@ -21,7 +21,6 @@ module Milvus
           collectionName: collection_name,
           data: data
         }
-
         req.body[:partitionName] = partition_name if partition_name
       end
       response.body.empty? ? true : response.body
@@ -40,7 +39,7 @@ module Milvus
         req.body = {
           collectionName: collection_name,
           filter: filter
-        }.to_json
+        }
       end
       response.body.empty? ? true : response.body
     end
@@ -84,7 +83,6 @@ module Milvus
           collectionName: collection_name,
           data: data
         }
-
         req.body[:partitionName] = partition_name if partition_name
       end
       response.body.empty? ? true : response.body
