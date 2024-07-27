@@ -272,6 +272,46 @@ client.partitions.drop(
 )
 ```
 
+### Roles
+```ruby
+# List roles available on the server
+client.roles.list
+```
+```ruby
+# Describe the role
+client.roles.describe(role_name: 'public')
+```
+
+### Users
+```ruby
+# Create new user
+client.users.create(user_name: 'user_name', password: 'password')
+```
+```ruby
+# List of roles assigned to the user
+client.users.describe(user_name: 'user_name')
+```
+```ruby
+# List all users in the specified database.
+client.users.list
+```
+```ruby
+# Drop existing user
+client.users.drop(user_name: 'user_name')
+```
+```ruby
+# Update password for the user
+client.users.update_password(user_name: 'user_name', password: 'old_password', new_password: 'new_password')
+```
+```ruby
+# Grant role to the user
+client.users.grant_role(user_name: 'user_name', role_name: 'admin')
+```
+```ruby
+# Revoke role from the user 
+client.users.revoke_role(user_name: 'user_name', role_name: 'admin')
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

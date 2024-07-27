@@ -33,6 +33,10 @@ module Milvus
       @roles ||= Milvus::Roles.new(client: self)
     end
 
+    def users
+      @users ||= Milvus::Users.new(client: self)
+    end
+
     def connection
       @connection ||= Faraday.new(url: "#{url}/#{API_VERSION}/") do |faraday|
         if api_key
