@@ -12,4 +12,5 @@ module Milvus
   autoload :Indexes, "milvus/indexes"
   autoload :Partitions, "milvus/partitions"
   autoload :Roles, "milvus/roles"
+  autoload :Users, "milvus/users"
 end
