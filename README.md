@@ -23,8 +23,8 @@ Available for paid consulting engagements! [Email me](mailto:andrei@sourcelabs.i
 https://docs.zilliz.com/reference/restful/data-plane-v2
 
 ## TODOs
-- [ ] Support for [User endpoints](https://docs.zilliz.com/reference/restful/user-operations-v2)
-- [ ] Support for [Role endpoints](https://docs.zilliz.com/reference/restful/role-operations-v2)
+- [X] Support for [User endpoints](https://docs.zilliz.com/reference/restful/user-operations-v2)
+- [X] Support for [Role endpoints](https://docs.zilliz.com/reference/restful/role-operations-v2)
 - [ ] Support for [Alias endpoints](https://docs.zilliz.com/reference/restful/alias-operations-v2)
 
 ## Installation
