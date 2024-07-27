@@ -1,0 +1,6 @@
+{"code": 0,
+  "data": [
+    {"dbName": "*", "grantor": "root", "objectName": "*", "objectType": "Collection", "privilege": "IndexDetail"},
+    {"dbName": "*", "grantor": "root", "objectName": "*", "objectType": "Global", "privilege": "DescribeCollection"}
+  ]
+}

@@ -11,4 +11,5 @@ module Milvus
   autoload :Entities, "milvus/entities"
   autoload :Indexes, "milvus/indexes"
   autoload :Partitions, "milvus/partitions"
+  autoload :Roles, "milvus/roles"
 end
