@@ -22,11 +22,6 @@ Available for paid consulting engagements! [Email me](mailto:andrei@sourcelabs.i
 ## API Docs
 https://docs.zilliz.com/reference/restful/data-plane-v2
 
-## TODOs
-- [X] Support for [User endpoints](https://docs.zilliz.com/reference/restful/user-operations-v2)
-- [X] Support for [Role endpoints](https://docs.zilliz.com/reference/restful/role-operations-v2)
-- [X] Support for [Alias endpoints](https://docs.zilliz.com/reference/restful/alias-operations-v2)
-
 ## Installation
 
 Install the gem and add to the application's Gemfile by executing:
