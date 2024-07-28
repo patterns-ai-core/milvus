@@ -13,4 +13,5 @@ module Milvus
   autoload :Partitions, "milvus/partitions"
   autoload :Roles, "milvus/roles"
   autoload :Users, "milvus/users"
+  autoload :Aliases, "milvus/aliases"
 end
