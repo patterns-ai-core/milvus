@@ -1,4 +1,5 @@
 ## [Unreleased]
+- Added Alias management
 
 ## [0.10.2] - 2024-07-28
 - Added Roles management
