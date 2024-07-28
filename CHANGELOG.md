@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [0.10.2] - 2024-07-28
+- Added Roles management
+- Added Users management
+- Added docker-compose.yml with directions to run Milvus in Docker
+
 ## [0.10.1] - 2024-07-04 🇺🇸
 - Fixes and improvements to the gem.
 
