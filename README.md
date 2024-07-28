@@ -25,7 +25,7 @@ https://docs.zilliz.com/reference/restful/data-plane-v2
 ## TODOs
 - [X] Support for [User endpoints](https://docs.zilliz.com/reference/restful/user-operations-v2)
 - [X] Support for [Role endpoints](https://docs.zilliz.com/reference/restful/role-operations-v2)
-- [ ] Support for [Alias endpoints](https://docs.zilliz.com/reference/restful/alias-operations-v2)
+- [X] Support for [Alias endpoints](https://docs.zilliz.com/reference/restful/alias-operations-v2)
 
 ## Installation
 
@@ -311,6 +311,27 @@ client.users.grant_role(user_name: 'user_name', role_name: 'admin')
 # Revoke role from the user 
 client.users.revoke_role(user_name: 'user_name', role_name: 'admin')
 ```
+### Aliases
+```ruby
+# Lists all existing collection aliases in the specified database
+client.aliases.list
+```
+```ruby
+# Describes the details of a specific alias
+client.aliases.describe
+```
+```ruby
+# Reassigns the alias of one collection to another.
+client.aliases.alter
+```
+```ruby
+# Drops a specified alias
+client.aliases.drop
+```
+```ruby
+# Creates an alias for an existing collection
+client.aliases.create
+```
 
 ## Development
 
@@ -320,7 +341,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Development with Docker
 
-Run `docker compose run --rm ruby_app bash` and install required gems (`bundle install`). It will give you a fully working development environment with Milvius services and gem's code.
+Run `docker compose run --rm ruby_app bash` and install required gems (`bundle install`). It will give you a fully working development environment with Milvus services and gem's code.
 
 For example inside docker container run `bin/console` and inside the ruby console:
 ```ruby

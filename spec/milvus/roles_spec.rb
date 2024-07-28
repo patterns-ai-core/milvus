@@ -1,4 +1,4 @@
-# spec/milvus/users_spec.rb
+# spec/milvus/roles_spec.rb
 
 require "spec_helper"
 require "faraday"
