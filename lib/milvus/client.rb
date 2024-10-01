@@ -4,13 +4,22 @@ require "faraday"
 
 module Milvus
   class Client
-    attr_reader :url, :api_key
+    attr_reader :url, :api_key, :adapter, :raise_error, :logger
 
     API_VERSION = "v2/vectordb"
 
-    def initialize(url:, api_key: nil)
+    def initialize(
+      url:,
+      api_key: nil,
+      adapter: Faraday.default_adapter,
+      raise_error: false,
+      logger: nil
+    )
       @url = url
       @api_key = api_key
+      @adapter = adapter
+      @raise_error = raise_error
+      @logger = logger || Logger.new($stdout)
     end
 
     def collections
@@ -47,8 +56,10 @@ module Milvus
           faraday.request :authorization, :Bearer, api_key
         end
         faraday.request :json
+        faraday.response :logger, logger, {headers: true, bodies: true, errors: true}
+        faraday.response :raise_error if raise_error
         faraday.response :json, content_type: /\bjson$/
-        faraday.adapter Faraday.default_adapter
+        faraday.adapter adapter
       end
     end
   end
