@@ -129,7 +129,7 @@ client.entities.insert(
 # Delete the entities with the boolean expression you created
 client.entities.delete(
   collection_name: "example_collection",
-  expression: "book_id in [0,1]"
+  filter: "book_id in [0,1]"
 )
 ```
 ```ruby
