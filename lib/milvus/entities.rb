@@ -123,10 +123,13 @@ module Milvus
       collection_name:,
       data:,
       anns_field:,
+      filter: nil,
       limit: nil,
-      output_fields: [],
       offset: nil,
-      filter: nil
+      grouping_field: nil,
+      output_fields: [],
+      search_params: {},
+      partition_names: []
     )
       response = client.connection.post("#{PATH}/search") do |req|
         params = {
@@ -138,6 +141,10 @@ module Milvus
         params[:outputFields] = output_fields if output_fields.any?
         params[:offset] = offset if offset
         params[:filter] = filter if filter
+        params[:searchParams] = search_params if search_params.any?
+        params[:partitionNames] = partition_names if partition_names.any?
+        params[:groupingField] = groupingField if grouping_field
+
         req.body = params
       end
       response.body.empty? ? true : response.body

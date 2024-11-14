@@ -187,7 +187,15 @@ client.entities.search(
   collection_name: "example_collection",
   anns_field: "vectors",
   data: [embedding],
-  filter: "id in [450847466900987454]"
+  # filter: "id in [450847466900987454]",
+  search_params: {
+    # Other accepted values: "COSINE" or "IP"
+    # NOTE: metric_type must be the same as metric type used when index was created
+    metric_type: "L2",
+    params: {
+      radius: 0.1, range_filter: 0.8
+    }
+  },
 )
 ```
 ```ruby

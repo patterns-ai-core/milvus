@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+## [0.10.4] - 2024-11-14
+- `client.entities.search()` now accepts `search_params: {}`
+
 ## [0.10.3] - 2024-10-01
 - Milvus::Client constructor accepts customer logger: to be passed in
 - Added Alias management
