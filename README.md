@@ -184,7 +184,7 @@ client.indexes.drop(
 ### Search, Querying & Hybrid Search
 ```ruby
 client.entities.search(
-  collection_name: "recipes",
+  collection_name: "example_collection",
   anns_field: "vectors",
   data: [embedding],
   # filter: "id in [450847466900987454]",
