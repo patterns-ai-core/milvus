@@ -127,6 +127,8 @@ module Milvus
       limit: nil,
       offset: nil,
       grouping_field: nil,
+      group_size: nil,
+      strict_group_size: nil,
       output_fields: [],
       search_params: {},
       partition_names: []
@@ -143,7 +145,9 @@ module Milvus
         params[:filter] = filter if filter
         params[:searchParams] = search_params if search_params.any?
         params[:partitionNames] = partition_names if partition_names.any?
-        params[:groupingField] = groupingField if grouping_field
+        params[:groupingField] = grouping_field if grouping_field
+        params[:groupSize] = group_size if group_size
+        params[:strictGroupSize] = strict_group_size if strict_group_size
 
         req.body = params
       end
