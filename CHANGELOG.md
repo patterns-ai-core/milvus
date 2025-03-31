@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+## [0.10.4] - 2025-03-31
+- Add missing grouping params to search operation
+
 ## [0.10.4] - 2024-11-14
 - `client.entities.search()` now accepts `search_params: {}`
 
